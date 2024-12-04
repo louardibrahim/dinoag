@@ -1,5 +1,3 @@
-#512*8*29
-#514, 32, 12
 
 
 from collections import deque

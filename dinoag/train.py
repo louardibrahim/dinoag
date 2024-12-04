@@ -135,53 +135,68 @@ class DINOAG_planner(pl.LightningModule):
 #====================
 
 if __name__ == "__main__":
-
+    
+    # Define command line arguments
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--id', type=str, default='DINOAG', help='Unique experiment identifier.')
     parser.add_argument('--epochs', type=int, default=60, help='Number of train epochs.')
     parser.add_argument('--lr', type=float, default=0.0001, help='Learning rate.')
     parser.add_argument('--val_every', type=int, default=3, help='Validation frequency (epochs).')
-    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size.')
     parser.add_argument('--logdir', type=str, default='log', help='Directory to log data to.')
-    parser.add_argument('--gpus', type=int, default=1, help='number of gpus')
-
+    parser.add_argument('--gpus', type=int, default=1, help='Number of GPUs.')
+    
     args = parser.parse_args()
+
+    # Modify log directory based on experiment ID
     args.logdir = os.path.join(args.logdir, args.id)
 
+    # Initialize global configuration (assumes GlobalConfig class is defined)
     config = GlobalConfig()
     GlobalConfig.initialize_data_urls()
-    # Data
+
+    # Load datasets
     train_set = CARLA_Data(root=config.root_dir_all, data_folders=config.train_data, img_aug=False)
-    print(len(train_set))
+    print(f"Training set size: {len(train_set)}")
+    
     val_set = CARLA_Data(root=config.root_dir_all, data_folders=config.val_data)
-    print(len(val_set))
-    dataloader_train = DataLoader(train_set, batch_size=args['batch_size'], shuffle=True, num_workers=8)
-    dataloader_val = DataLoader(val_set, batch_size=args['batch_size'], shuffle=False, num_workers=4)
+    print(f"Validation set size: {len(val_set)}")
 
-    DINOAG_model = DINOAG_planner(config, args["lr"])
+    # Create data loaders with batch size from command-line arguments
+    dataloader_train = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=8)
+    dataloader_val = DataLoader(val_set, batch_size=args.batch_size, shuffle=False, num_workers=4)
 
+    # Initialize the model with learning rate from command-line arguments
+    DINOAG_model = DINOAG_planner(config, args.lr)
 
-    checkpoint_callback = ModelCheckpoint(save_weights_only=False, mode="max", monitor="val_loss", save_top_k=2, save_last=True,
-                                        dirpath=args["logdir"], filename="best_{epoch:02d}-{val_loss:.3f}")
+    # Define checkpoint callback
+    checkpoint_callback = ModelCheckpoint(
+        save_weights_only=False,
+        mode="max",
+        monitor="val_loss",
+        save_top_k=2,
+        save_last=True,
+        dirpath=args.logdir,
+        filename="best_{epoch:02d}-{val_loss:.3f}"
+    )
     checkpoint_callback.CHECKPOINT_NAME_LAST = "{epoch}-last"
 
-
+    # Initialize trainer using GPUs and other parameters from command-line arguments
     trainer = pl.Trainer(
-
-        default_root_dir=args["logdir"],
-        accelerator="gpu",  
-        devices=2,          
+        default_root_dir=args.logdir,
+        accelerator="gpu",  # Use GPU
+        devices=args.gpus,  # Use the number of GPUs specified in args
         sync_batchnorm=True,
-        strategy="ddp_find_unused_parameters_true",     
+        strategy="ddp_find_unused_parameters_true",  # DataParallel strategy
         profiler='simple',
-        callbacks=[PeriodicCheckpoint(1000),checkpoint_callback],
+        callbacks=[PeriodicCheckpoint(1000), checkpoint_callback],
         log_every_n_steps=100,
-        check_val_every_n_epoch=args["val_every"],
-        max_epochs=args["epochs"],
+        check_val_every_n_epoch=args.val_every,  # Validation frequency from args
+        max_epochs=args.epochs  # Max epochs from args
     )
 
-
+    # Start training
     trainer.fit(DINOAG_model, dataloader_train, dataloader_val)
 
 
