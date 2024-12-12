@@ -10,9 +10,8 @@ dinoag is a simple soluttion for trajectory prediction for end-to-end autonomous
 ## Demo
 
 
-[![Watch the video](https://raw.githubusercontent.com/louardibrahim/dinoag/master/video.png)](https://raw.githubusercontent.com/louardibrahim/dinoag/master/dinoag_carla.mp4)
+<video src="https://github.com/user-attachments/assets/2239491e-aa43-4c7b-b638-f733154c2422"></video>
 
-<video src="dinoag_carla.mp4" controls="controls" style="max-width: 100%; height: auto;"></video>
 
 ## Setup
 Download and setup CARLA 0.9.10.1
