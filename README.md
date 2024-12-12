@@ -10,7 +10,7 @@ dinoag is a simple soluttion for trajectory prediction for end-to-end autonomous
 ## Demo
 
 
-[![Watch the video](https://raw.githubusercontent.com/username/repository/branch/path/to/thumbnail.jpg)](https://raw.githubusercontent.com/louardibrahim/dinoag/blob/master/dinoag_carla.mp4)
+[![Watch the video](https://raw.githubusercontent.com/louardibrahim/dinoag/master/video.png)](https://raw.githubusercontent.com/louardibrahim/dinoag/master/dinoag_carla.mp4)
 
 <video src="dinoag_carla.mp4" controls="controls" style="max-width: 100%; height: auto;"></video>
 
