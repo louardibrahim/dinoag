@@ -1,6 +1,6 @@
 # dinoag - Trajectory Prediction for End-to-end Autonomous Driving
 
-Dinoag is a project focused on trajectory prediction for end-to-end autonomous driving systems. It leverages advanced deep learning techniques to forecast the future paths of surrounding vehicles, enabling autonomous vehicles to navigate complex environments safely and efficiently.  
+Dinoag is a project focused on trajectory prediction for end-to-end autonomous driving using the CARLA simulator. It integrates DinoV2 for visual feature extraction, an MLP-based encoder for sensor data, and a GRU model for trajectory prediction, followed by a PID controller for path execution. This system enables autonomous vehicles to navigate complex environments.
 
 ## Pipeline
 ![teaser](pipeline.png)
